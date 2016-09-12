@@ -11,8 +11,12 @@ require('babel/register')({
 });
 
 app.use('/', function(req, res) {
-  res.render('homework', '');
+  res.render('homework', {
+      keywords : ['apple', 'pear', 'banana'],
+      title: 'homework'
+    })
 });
+
 
 
 app.listen(app.get('port'), function() {});

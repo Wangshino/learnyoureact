@@ -1,50 +1,85 @@
 import React from 'react';
 
-export default class TodoBox extends React.Component {
-  // Omitted
-  render() {
+
+
+var ProductRow = React.createClass({
+  render: function() {
     return (
-        <div className="todoBox">
-                <h1>Homework</h1>
-                <InputText />
-                <TodoForm />
-        </div>
-    )
+      <tr>
+        <td>{this.props.keyword.value}</td>
+      </tr>
+    );
   }
-}
+});
 
-    class InputText extends React.Component {
-        render() {
-            return (
-                <div className="inputText">
-                    <input />
-                </div>
-            );
-        }
-    }
+var ProductTable = React.createClass({
+  render: function() {
+    var rows = [];
+    this.props.keywords.forEach(function(keyword) {
+      if (keyword.option.indexOf(this.props.filterText) === -1 ) {
+        return;
+      }
+      rows.push(<ProductRow keyword={keyword} />);
+    }.bind(this));
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>keywords</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    );
+  }
+});
 
-    class Todo extends React.Component {
-        // Write code here
-        render() {
-            return (
-                <tr>
-                    <td style={{border: "1px solid black"}}>{this.props.title}</td>
-                    <td style={{border: "1px solid black"}}>{this.props.children}</td>
-                </tr>
-            )
-        }
-    }
-var QueryString = {1: banana, 2: apple}
+var SearchBar = React.createClass({
+  handleChange: function() {
+    this.props.onUserInput(
+      this.refs.filterTextInput.value
+    );
+  },
+  render: function() {
+    return (
+      <form>
+        <input
+          type="text"
+          placeholder="Search..."
+          value={this.props.filterText}
+          ref="filterTextInput"
+          onChange={this.handleChange}
+        />
+      </form>
+    );
+  }
+});
 
-    class TodoForm extends React.Component {
-        render() {
-            return (
-                <div className= "queryString">
-                    <ul>
-                        <li>{QueryString.1}</li>
-                        <li>{QueryString.2}</li>
-                    </ul>
-                </div>
-            )
-        }
-    }
+var FilterableProductTable = React.createClass({
+  getInitialState: function() {
+    return {
+      filterText: ''
+    };
+  },
+
+  handleUserInput: function(filterText) {
+    this.setState({
+      filterText: filterText
+    });
+  },
+
+  render: function() {
+    return (
+      <div>
+        <SearchBar
+          filterText={this.state.filterText}
+          onUserInput={this.handleUserInput}
+        />
+        <ProductTable
+          keywords={this.props.keywords}
+          filterText={this.state.filterText}
+        />
+      </div>
+    );
+  }
+});
